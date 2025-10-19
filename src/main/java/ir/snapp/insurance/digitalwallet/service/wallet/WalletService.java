@@ -1,7 +1,10 @@
 package ir.snapp.insurance.digitalwallet.service.wallet;
 
+import ir.snapp.insurance.digitalwallet.controller.wallet.dto.TransactionFilterRequest;
 import ir.snapp.insurance.digitalwallet.controller.wallet.dto.WalletRequest;
+import ir.snapp.insurance.digitalwallet.model.Transaction;
 import ir.snapp.insurance.digitalwallet.model.Wallet;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -37,6 +40,16 @@ public interface WalletService {
      * @return the balance of the wallet
      */
     Double getBalance(String username, Long walletId);
+
+    /**
+     * Filters transactions for the specified wallet based on the provided filter criteria.
+     *
+     * @param username the username of the wallet owner
+     * @param walletId the ID of the wallet
+     * @param request  the transaction filter request containing filter criteria
+     * @return a paginated list of Transactions matching the filter criteria
+     */
+    Page<Transaction> filterTransactions(String username, Long walletId, TransactionFilterRequest request);
 
     /**
      * Deposits a specified amount into the user's wallet.

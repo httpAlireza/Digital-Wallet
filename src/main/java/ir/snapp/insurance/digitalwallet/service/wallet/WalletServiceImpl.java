@@ -1,13 +1,20 @@
 package ir.snapp.insurance.digitalwallet.service.wallet;
 
+import ir.snapp.insurance.digitalwallet.controller.wallet.dto.TransactionFilterRequest;
 import ir.snapp.insurance.digitalwallet.controller.wallet.dto.WalletRequest;
 import ir.snapp.insurance.digitalwallet.enums.Currency;
+import ir.snapp.insurance.digitalwallet.enums.TransactionType;
+import ir.snapp.insurance.digitalwallet.model.Transaction;
 import ir.snapp.insurance.digitalwallet.model.User;
 import ir.snapp.insurance.digitalwallet.model.Wallet;
+import ir.snapp.insurance.digitalwallet.repository.TransactionRepository;
 import ir.snapp.insurance.digitalwallet.repository.UserRepository;
 import ir.snapp.insurance.digitalwallet.repository.WalletRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +31,8 @@ public class WalletServiceImpl implements WalletService {
     private final WalletRepository walletRepository;
 
     private final UserRepository userRepository;
+
+    private final TransactionRepository transactionRepository;
 
     /**
      * {@inheritDoc}
@@ -62,21 +71,55 @@ public class WalletServiceImpl implements WalletService {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public Page<Transaction> filterTransactions(String username, Long walletId, TransactionFilterRequest request) {
+        Wallet wallet = findUserWallet(username, walletId);
+
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+
+        return transactionRepository.findByFromWalletIdOrToWalletIdAndCreatedAtBetween(
+                wallet.getId(),
+                wallet.getId(),
+                request.getFrom(),
+                request.getTo(),
+                pageable
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
     public void deposit(String username, Long walletId, Double amount) {
         Wallet wallet = findUserWallet(username, walletId);
         wallet.setBalance(wallet.getBalance() + amount);
+
+        Transaction transaction = new Transaction();
+        transaction.setType(TransactionType.DEPOSIT);
+        transaction.setAmount(amount);
+        transaction.setToWallet(wallet);
+
+        transactionRepository.save(transaction);
         walletRepository.save(wallet);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Transactional
     public void withdraw(String username, Long walletId, Double amount) {
         Wallet wallet = findUserWallet(username, walletId);
         if (wallet.getBalance() < amount) {
             throw new IllegalArgumentException("Insufficient funds");
         }
         wallet.setBalance(wallet.getBalance() - amount);
+
+        Transaction transaction = new Transaction();
+        transaction.setType(TransactionType.WITHDRAW);
+        transaction.setAmount(amount);
+        transaction.setFromWallet(wallet);
+
+        transactionRepository.save(transaction);
         walletRepository.save(wallet);
     }
 
@@ -89,8 +132,8 @@ public class WalletServiceImpl implements WalletService {
         Wallet toWallet = walletRepository.findById(toWalletId)
                 .orElseThrow(() -> new IllegalArgumentException("Target wallet not found"));
 
-        if(!fromWallet.getCurrency().equals(toWallet.getCurrency())) {
-            throw  new IllegalArgumentException("Currency mismatch between wallets");
+        if (!fromWallet.getCurrency().equals(toWallet.getCurrency())) {
+            throw new IllegalArgumentException("Currency mismatch between wallets");
         }
 
         if (fromWallet.getBalance() < amount)
@@ -98,6 +141,14 @@ public class WalletServiceImpl implements WalletService {
 
         fromWallet.setBalance(fromWallet.getBalance() - amount);
         toWallet.setBalance(toWallet.getBalance() + amount);
+
+        Transaction transaction = new Transaction();
+        transaction.setType(TransactionType.TRANSFER);
+        transaction.setAmount(amount);
+        transaction.setFromWallet(fromWallet);
+        transaction.setToWallet(toWallet);
+
+        transactionRepository.save(transaction);
         walletRepository.save(fromWallet);
         walletRepository.save(toWallet);
     }
