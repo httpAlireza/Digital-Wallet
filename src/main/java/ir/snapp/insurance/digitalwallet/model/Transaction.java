@@ -9,6 +9,11 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+/**
+ * Entity representing a transaction in the digital wallet system.
+ *
+ * @author Alireza Khodadoost
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

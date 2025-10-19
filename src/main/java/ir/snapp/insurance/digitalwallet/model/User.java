@@ -11,6 +11,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entity representing a user in the digital wallet system.
+ *
+ * @author Alireza Khodadoost
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

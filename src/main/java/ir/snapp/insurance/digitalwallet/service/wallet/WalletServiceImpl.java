@@ -6,18 +6,29 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of WalletService to handle wallet operations such as deposit, withdraw, and transfer.
+ *
+ * @author Alireza Khodadoost
+ */
 @Service
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
 
     private final WalletRepository walletRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     public void deposit(String username, Long walletId, Double amount) {
         Wallet wallet = findUserWallet(username, walletId);
         wallet.setBalance(wallet.getBalance() + amount);
         walletRepository.save(wallet);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void withdraw(String username, Long walletId, Double amount) {
         Wallet wallet = findUserWallet(username, walletId);
         if (wallet.getBalance() < amount) {
@@ -27,6 +38,9 @@ public class WalletServiceImpl implements WalletService {
         walletRepository.save(wallet);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Transactional
     public void transfer(String username, Long fromWalletId, Long toWalletId, Double amount) {
         Wallet fromWallet = findUserWallet(username, fromWalletId);

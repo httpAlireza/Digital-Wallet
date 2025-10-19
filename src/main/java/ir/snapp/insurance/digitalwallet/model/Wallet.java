@@ -1,5 +1,6 @@
 package ir.snapp.insurance.digitalwallet.model;
 
+import ir.snapp.insurance.digitalwallet.enums.Currency;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +10,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+/**
+ * Entity representing a wallet in the digital wallet system.
+ *
+ * @author Alireza Khodadoost
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,7 +30,7 @@ public class Wallet {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private String currency;
+    private Currency currency;
 
     @Column(nullable = false)
     private Double balance;

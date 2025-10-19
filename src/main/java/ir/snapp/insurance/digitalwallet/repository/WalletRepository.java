@@ -7,6 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository interface for Wallet entity operations.
+ *
+ * @author Alireza Khodadoost
+ */
 public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
     List<Wallet> findByUserUsername(String username);
