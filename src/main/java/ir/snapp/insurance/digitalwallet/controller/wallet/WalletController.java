@@ -41,6 +41,7 @@ public class WalletController {
     public ResponseEntity<WalletDto> createWallet(
             @Validated(ValidationGroups.ValidationSeq.class) @RequestBody WalletCreationRequest request,
             Principal principal) {
+        log.debug("Received request to Create Wallet: {} for user: {}", request, principal.getName());
         Wallet wallet = walletService.createWallet(principal.getName(), request);
         return ResponseEntity.ok(WalletDto.from(wallet));
     }
@@ -53,6 +54,7 @@ public class WalletController {
      */
     @GetMapping
     public ResponseEntity<List<WalletDto>> getWallets(Principal principal) {
+        log.debug("Received request to get wallets for user: {}", principal.getName());
         List<WalletDto> wallets = walletService.getWallets(principal.getName())
                 .stream().map(WalletDto::from)
                 .toList();
@@ -72,6 +74,7 @@ public class WalletController {
             @RequestParam Map<String, String> params,
             @PathVariable Long walletId,
             Principal principal) {
+        log.debug("Received request to filter transactions for wallet: {} for user: {}", walletId, principal.getName());
         var request = createTransactionFilterRequest(params);
         Page<Transaction> page = walletService.filterTransactions(principal.getName(), walletId, request);
         return ResponseEntity.ok(page);
@@ -90,6 +93,7 @@ public class WalletController {
             @PathVariable Long walletId,
             @Validated(ValidationGroups.ValidationSeq.class) @RequestBody DepositRequest request,
             Principal principal) {
+        log.debug("Received request to deposit wallet: {} for user: {}", walletId, principal.getName());
         walletService.deposit(principal.getName(), walletId, request.amount());
         return ResponseEntity.ok("Deposit successful");
     }
@@ -107,6 +111,7 @@ public class WalletController {
             @PathVariable Long walletId,
             @Validated(ValidationGroups.ValidationSeq.class) @RequestBody WithdrawRequest withdrawRequest,
             Principal principal) {
+        log.debug("Received request to withdraw wallet: {} for user: {}", walletId, principal.getName());
         walletService.withdraw(principal.getName(), walletId, withdrawRequest.amount());
         return ResponseEntity.ok("Withdrawal successful");
     }
@@ -121,6 +126,7 @@ public class WalletController {
     @GetMapping("/{walletId}/balance")
     public ResponseEntity<Double> getBalance(@PathVariable Long walletId,
                                              Principal principal) {
+        log.debug("Received request to get wallet: {} for user: {}", walletId, principal.getName());
         var balance = walletService.getBalance(principal.getName(), walletId);
         return ResponseEntity.ok(balance);
     }
@@ -138,6 +144,7 @@ public class WalletController {
             @PathVariable Long walletId,
             @Validated(ValidationGroups.ValidationSeq.class) @RequestBody TransferRequest request,
             Principal principal) {
+        log.debug("Received request to transfer wallet: {} for user: {}", walletId, principal.getName());
         walletService.transfer(principal.getName(), walletId, request.toWalletId(), request.amount());
         return ResponseEntity.ok("Transfer successful");
     }

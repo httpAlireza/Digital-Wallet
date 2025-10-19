@@ -12,6 +12,7 @@ import ir.snapp.insurance.digitalwallet.repository.UserRepository;
 import ir.snapp.insurance.digitalwallet.repository.WalletRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ import static ir.snapp.insurance.digitalwallet.exception.PredefinedError.*;
  *
  * @author Alireza Khodadoost
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
@@ -51,7 +53,10 @@ public class WalletServiceImpl implements WalletService {
         wallet.setBalance(0.0);
         wallet.setUser(user);
 
-        return walletRepository.save(wallet);
+        walletRepository.save(wallet);
+
+        log.debug("Created wallet: {} for user: {}", wallet, username);
+        return wallet;
     }
 
     /**
@@ -106,6 +111,8 @@ public class WalletServiceImpl implements WalletService {
 
         transactionRepository.save(transaction);
         walletRepository.save(wallet);
+
+        log.debug("Deposited {} {} to wallet {} of user {}", amount, wallet.getCurrency(), walletId, username);
     }
 
     /**
@@ -126,6 +133,8 @@ public class WalletServiceImpl implements WalletService {
 
         transactionRepository.save(transaction);
         walletRepository.save(wallet);
+
+        log.debug("Withdraw {} {} from wallet {} of user {}", amount, wallet.getCurrency(), walletId, username);
     }
 
     /**
@@ -156,6 +165,9 @@ public class WalletServiceImpl implements WalletService {
         transactionRepository.save(transaction);
         walletRepository.save(fromWallet);
         walletRepository.save(toWallet);
+
+        log.debug("Transferred {} {} from wallet {} to wallet {} by user {}",
+                amount, fromWallet.getCurrency(), fromWalletId, toWalletId, username);
     }
 
     private Wallet findUserWallet(String username, Long walletId) {

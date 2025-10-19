@@ -7,6 +7,7 @@ import ir.snapp.insurance.digitalwallet.model.User;
 import ir.snapp.insurance.digitalwallet.repository.UserRepository;
 import ir.snapp.insurance.digitalwallet.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
  *
  * @author Alireza Khodadoost
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -40,6 +42,7 @@ public class AuthServiceImpl implements AuthService {
         UserDetails user = (UserDetails) authentication.getPrincipal();
         String token = jwtUtils.generateToken(user.getUsername());
 
+        log.debug("User {} logged in successfully", user.getUsername());
         return new AuthResponse(token);
     }
 
@@ -59,6 +62,7 @@ public class AuthServiceImpl implements AuthService {
 
         String token = jwtUtils.generateToken(newUser.getUsername());
 
+        log.debug("User {} signed up successfully", newUser.getUsername());
         return new AuthResponse(token);
     }
 }

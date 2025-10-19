@@ -8,7 +8,7 @@ spring:
       maximum-pool-size: 30
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   jackson:
     default-property-inclusion: non_null
     deserialization:
