@@ -1,11 +1,42 @@
 package ir.snapp.insurance.digitalwallet.service.wallet;
 
+import ir.snapp.insurance.digitalwallet.controller.wallet.dto.WalletRequest;
+import ir.snapp.insurance.digitalwallet.model.Wallet;
+
+import java.util.List;
+
 /**
  * Service interface for wallet operations such as deposit, withdraw, and transfer.
  *
  * @author Alireza Khodadoost
  */
 public interface WalletService {
+
+    /**
+     * Creates a new wallet for the specified user.
+     *
+     * @param username the username of the wallet owner
+     * @param request  the wallet creation request containing wallet details
+     * @return the created Wallet
+     */
+    Wallet createWallet(String username, WalletRequest request);
+
+    /**
+     * Retrieves all wallets for the specified user.
+     *
+     * @param username the username of the wallet owner
+     * @return a list of Wallets
+     */
+    List<Wallet> getWallets(String username);
+
+    /**
+     * Retrieves the balance of the specified wallet for the user.
+     *
+     * @param username the username of the wallet owner
+     * @param walletId the ID of the wallet
+     * @return the balance of the wallet
+     */
+    Double getBalance(String username, Long walletId);
 
     /**
      * Deposits a specified amount into the user's wallet.

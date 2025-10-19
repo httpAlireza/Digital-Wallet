@@ -1,10 +1,16 @@
 package ir.snapp.insurance.digitalwallet.service.wallet;
 
+import ir.snapp.insurance.digitalwallet.controller.wallet.dto.WalletRequest;
+import ir.snapp.insurance.digitalwallet.enums.Currency;
+import ir.snapp.insurance.digitalwallet.model.User;
 import ir.snapp.insurance.digitalwallet.model.Wallet;
+import ir.snapp.insurance.digitalwallet.repository.UserRepository;
 import ir.snapp.insurance.digitalwallet.repository.WalletRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Implementation of WalletService to handle wallet operations such as deposit, withdraw, and transfer.
@@ -16,6 +22,42 @@ import org.springframework.stereotype.Service;
 public class WalletServiceImpl implements WalletService {
 
     private final WalletRepository walletRepository;
+
+    private final UserRepository userRepository;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Wallet createWallet(String username, WalletRequest request) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        Wallet wallet = new Wallet();
+        wallet.setName(request.getName());
+        wallet.setCurrency(request.getCurrency() != null ? request.getCurrency() : Currency.IRR);
+        wallet.setBalance(0.0);
+        wallet.setUser(user);
+
+        return walletRepository.save(wallet);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Wallet> getWallets(String username) {
+        return walletRepository.findByUserUsername(username);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Double getBalance(String username, Long walletId) {
+        Wallet wallet = findUserWallet(username, walletId);
+        return wallet.getBalance();
+    }
 
     /**
      * {@inheritDoc}
@@ -46,6 +88,10 @@ public class WalletServiceImpl implements WalletService {
         Wallet fromWallet = findUserWallet(username, fromWalletId);
         Wallet toWallet = walletRepository.findById(toWalletId)
                 .orElseThrow(() -> new IllegalArgumentException("Target wallet not found"));
+
+        if(!fromWallet.getCurrency().equals(toWallet.getCurrency())) {
+            throw  new IllegalArgumentException("Currency mismatch between wallets");
+        }
 
         if (fromWallet.getBalance() < amount)
             throw new IllegalArgumentException("Insufficient funds");
