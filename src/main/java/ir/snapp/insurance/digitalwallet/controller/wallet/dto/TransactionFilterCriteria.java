@@ -8,6 +8,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+import static ir.snapp.insurance.digitalwallet.util.Constants.MAX_DATE;
+import static ir.snapp.insurance.digitalwallet.util.Constants.MIN_DATE;
+
 /**
  * DTO for filtering transactions request
  *
@@ -16,9 +19,9 @@ import java.time.LocalDateTime;
 @Data
 public class TransactionFilterCriteria {
 
-    private LocalDateTime from = LocalDateTime.of(1970, 1, 1, 0, 0);
+    private LocalDateTime from = MIN_DATE;
 
-    private LocalDateTime to = LocalDateTime.of(2100, 12, 31, 23, 59);
+    private LocalDateTime to = MAX_DATE;
 
     @Min(message = "page.cannot_be_negative", value = 0, groups = ValidationGroups.Validity.class)
     private int page = 0;
