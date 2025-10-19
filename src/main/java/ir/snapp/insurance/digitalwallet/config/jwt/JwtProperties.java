@@ -1,6 +1,8 @@
 package ir.snapp.insurance.digitalwallet.config.jwt;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -20,7 +22,9 @@ import java.time.Duration;
 @ConfigurationProperties(prefix = "jwt")
 public class JwtProperties {
 
+    @NotNull(message = "jwt.secret.is_required")
     private String secret;
 
+    @NotNull(message = "jwt.expiration.is_required")
     private Duration expiration;
 }

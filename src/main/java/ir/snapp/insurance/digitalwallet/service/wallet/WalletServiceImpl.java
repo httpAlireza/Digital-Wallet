@@ -1,7 +1,7 @@
 package ir.snapp.insurance.digitalwallet.service.wallet;
 
 import ir.snapp.insurance.digitalwallet.controller.wallet.dto.TransactionFilterRequest;
-import ir.snapp.insurance.digitalwallet.controller.wallet.dto.WalletRequest;
+import ir.snapp.insurance.digitalwallet.controller.wallet.dto.WalletCreationRequest;
 import ir.snapp.insurance.digitalwallet.enums.Currency;
 import ir.snapp.insurance.digitalwallet.enums.TransactionType;
 import ir.snapp.insurance.digitalwallet.model.Transaction;
@@ -39,7 +39,7 @@ public class WalletServiceImpl implements WalletService {
      * {@inheritDoc}
      */
     @Override
-    public Wallet createWallet(String username, WalletRequest request) {
+    public Wallet createWallet(String username, WalletCreationRequest request) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 

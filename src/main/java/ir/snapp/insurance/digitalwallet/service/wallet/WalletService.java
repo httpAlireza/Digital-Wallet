@@ -1,7 +1,7 @@
 package ir.snapp.insurance.digitalwallet.service.wallet;
 
 import ir.snapp.insurance.digitalwallet.controller.wallet.dto.TransactionFilterRequest;
-import ir.snapp.insurance.digitalwallet.controller.wallet.dto.WalletRequest;
+import ir.snapp.insurance.digitalwallet.controller.wallet.dto.WalletCreationRequest;
 import ir.snapp.insurance.digitalwallet.model.Transaction;
 import ir.snapp.insurance.digitalwallet.model.Wallet;
 import org.springframework.data.domain.Page;
@@ -22,7 +22,7 @@ public interface WalletService {
      * @param request  the wallet creation request containing wallet details
      * @return the created Wallet
      */
-    Wallet createWallet(String username, WalletRequest request);
+    Wallet createWallet(String username, WalletCreationRequest request);
 
     /**
      * Retrieves all wallets for the specified user.

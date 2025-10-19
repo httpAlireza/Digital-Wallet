@@ -6,6 +6,7 @@ package ir.snapp.insurance.digitalwallet.controller.auth.dto;
  * @author Alireza Khodadoost
  */
 public record AuthResponse(
-        String token) {
+        String token
+) {
 }
 
