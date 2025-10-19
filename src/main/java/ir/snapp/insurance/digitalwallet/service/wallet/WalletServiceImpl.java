@@ -1,7 +1,9 @@
 package ir.snapp.insurance.digitalwallet.service.wallet;
 
+import ir.snapp.insurance.digitalwallet.controller.wallet.dto.TransactionDto;
 import ir.snapp.insurance.digitalwallet.controller.wallet.dto.TransactionFilterRequest;
 import ir.snapp.insurance.digitalwallet.controller.wallet.dto.WalletCreationRequest;
+import ir.snapp.insurance.digitalwallet.controller.wallet.dto.WalletDto;
 import ir.snapp.insurance.digitalwallet.enums.Currency;
 import ir.snapp.insurance.digitalwallet.enums.TransactionType;
 import ir.snapp.insurance.digitalwallet.model.Transaction;
@@ -10,10 +12,10 @@ import ir.snapp.insurance.digitalwallet.model.Wallet;
 import ir.snapp.insurance.digitalwallet.repository.TransactionRepository;
 import ir.snapp.insurance.digitalwallet.repository.UserRepository;
 import ir.snapp.insurance.digitalwallet.repository.WalletRepository;
+import ir.snapp.insurance.digitalwallet.util.Paginated;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -43,7 +45,7 @@ public class WalletServiceImpl implements WalletService {
      * {@inheritDoc}
      */
     @Override
-    public Wallet createWallet(String username, WalletCreationRequest request) {
+    public WalletDto createWallet(String username, WalletCreationRequest request) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(USER_NOT_FOUND::getAppException);
 
@@ -63,15 +65,18 @@ public class WalletServiceImpl implements WalletService {
         walletRepository.save(wallet);
 
         log.debug("Created wallet: {} for user: {}", wallet, username);
-        return wallet;
+        return WalletDto.fromEntity(wallet);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Wallet> getWallets(String username) {
-        return walletRepository.findByUserUsername(username);
+    public List<WalletDto> getWallets(String username) {
+        return walletRepository.findByUserUsername(username)
+                .stream()
+                .map(WalletDto::fromEntity)
+                .toList();
     }
 
     /**
@@ -87,20 +92,32 @@ public class WalletServiceImpl implements WalletService {
      * {@inheritDoc}
      */
     @Override
-    public Page<Transaction> filterTransactions(String username, Long walletId, TransactionFilterRequest request) {
+    public Paginated<TransactionDto> filterTransactions(String username, Long walletId, TransactionFilterRequest request) {
         Wallet wallet = findUserWallet(username, walletId);
 
         Pageable pageable = PageRequest.of(request.getPage(),
                 request.getSize(),
                 Sort.by(Sort.Direction.ASC, "createdAt"));
 
-        return transactionRepository.findByFromWalletIdOrToWalletIdAndCreatedAtBetween(
+        var transactions = transactionRepository.findByFromWalletIdOrToWalletIdAndCreatedAtBetween(
+                        wallet.getId(),
+                        wallet.getId(),
+                        request.getFrom(),
+                        request.getTo(),
+                        pageable).stream()
+                .map(TransactionDto::fromEntity)
+                .toList();
+
+        log.debug("trx size : {}", transactions);
+
+        var totalElements = transactionRepository.countByFromWalletIdOrToWalletIdAndCreatedAtBetween(
                 wallet.getId(),
                 wallet.getId(),
                 request.getFrom(),
-                request.getTo(),
-                pageable
+                request.getTo()
         );
+
+        return new Paginated<>(request.getPage(), request.getSize(), totalElements, transactions);
     }
 
     /**

@@ -14,7 +14,7 @@ public record WalletDto(
         Currency currency,
         Double balance
 ) {
-    public static WalletDto from(Wallet wallet) {
+    public static WalletDto fromEntity(Wallet wallet) {
         return new WalletDto(
                 wallet.getId(),
                 wallet.getName(),
