@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static ir.snapp.insurance.digitalwallet.exception.PredefinedError.*;
+
 /**
  * Implementation of WalletService to handle wallet operations such as deposit, withdraw, and transfer.
  *
@@ -41,7 +43,7 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public Wallet createWallet(String username, WalletCreationRequest request) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(USER_NOT_FOUND::getAppException);
 
         Wallet wallet = new Wallet();
         wallet.setName(request.name());
@@ -113,7 +115,7 @@ public class WalletServiceImpl implements WalletService {
     public void withdraw(String username, Long walletId, Double amount) {
         Wallet wallet = findUserWallet(username, walletId);
         if (wallet.getBalance() < amount) {
-            throw new IllegalArgumentException("Insufficient funds");
+            throw INSUFFICIENT_FUNDS.getAppException();
         }
         wallet.setBalance(wallet.getBalance() - amount);
 
@@ -133,14 +135,14 @@ public class WalletServiceImpl implements WalletService {
     public void transfer(String username, Long fromWalletId, Long toWalletId, Double amount) {
         Wallet fromWallet = findUserWallet(username, fromWalletId);
         Wallet toWallet = walletRepository.findById(toWalletId)
-                .orElseThrow(() -> new IllegalArgumentException("Target wallet not found"));
+                .orElseThrow(TARGET_WALLET_NOT_FOUND::getAppException);
 
         if (!fromWallet.getCurrency().equals(toWallet.getCurrency())) {
-            throw new IllegalArgumentException("Currency mismatch between wallets");
+            throw CURRENCY_MISMATCH.getAppException();
         }
 
         if (fromWallet.getBalance() < amount)
-            throw new IllegalArgumentException("Insufficient funds");
+            throw INSUFFICIENT_FUNDS.getAppException();
 
         fromWallet.setBalance(fromWallet.getBalance() - amount);
         toWallet.setBalance(toWallet.getBalance() + amount);
@@ -158,7 +160,7 @@ public class WalletServiceImpl implements WalletService {
 
     private Wallet findUserWallet(String username, Long walletId) {
         return walletRepository.findByIdAndUserUsername(walletId, username)
-                .orElseThrow(() -> new IllegalArgumentException("Wallet not found"));
+                .orElseThrow(WALLET_NOT_FOUND::getAppException);
     }
 }
 
