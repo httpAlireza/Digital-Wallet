@@ -31,12 +31,12 @@ public class JwtUtils {
     /**
      * Generates a JWT token for the given user details.
      *
-     * @param userDetails the user details
+     * @param username the username
      * @return the generated JWT token
      */
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(String username) {
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
+                .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration().toMillis()))
                 .signWith(secretKey, SignatureAlgorithm.HS256)

@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -75,7 +76,9 @@ public class WalletServiceImpl implements WalletService {
     public Page<Transaction> filterTransactions(String username, Long walletId, TransactionFilterRequest request) {
         Wallet wallet = findUserWallet(username, walletId);
 
-        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+        Pageable pageable = PageRequest.of(request.getPage(),
+                request.getSize(),
+                Sort.by(Sort.Direction.ASC, "createdAt"));
 
         return transactionRepository.findByFromWalletIdOrToWalletIdAndCreatedAtBetween(
                 wallet.getId(),
