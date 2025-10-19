@@ -39,7 +39,7 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Wallet> wallets = new ArrayList<>();
+    @Version
+    private int version;
 }
 
