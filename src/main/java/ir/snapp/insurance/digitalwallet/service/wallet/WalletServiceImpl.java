@@ -1,9 +1,6 @@
 package ir.snapp.insurance.digitalwallet.service.wallet;
 
-import ir.snapp.insurance.digitalwallet.controller.wallet.dto.TransactionDto;
-import ir.snapp.insurance.digitalwallet.controller.wallet.dto.TransactionFilterRequest;
-import ir.snapp.insurance.digitalwallet.controller.wallet.dto.WalletCreationRequest;
-import ir.snapp.insurance.digitalwallet.controller.wallet.dto.WalletDto;
+import ir.snapp.insurance.digitalwallet.controller.wallet.dto.*;
 import ir.snapp.insurance.digitalwallet.enums.Currency;
 import ir.snapp.insurance.digitalwallet.enums.TransactionType;
 import ir.snapp.insurance.digitalwallet.model.Transaction;
@@ -83,27 +80,27 @@ public class WalletServiceImpl implements WalletService {
      * {@inheritDoc}
      */
     @Override
-    public Double getBalance(String username, Long walletId) {
+    public BalanceDto getBalance(String username, Long walletId) {
         Wallet wallet = findUserWallet(username, walletId);
-        return wallet.getBalance();
+        return new BalanceDto(walletId, wallet.getBalance());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Paginated<TransactionDto> filterTransactions(String username, Long walletId, TransactionFilterRequest request) {
+    public Paginated<TransactionDto> filterTransactions(String username, Long walletId, TransactionFilterCriteria criteria) {
         Wallet wallet = findUserWallet(username, walletId);
 
-        Pageable pageable = PageRequest.of(request.getPage(),
-                request.getSize(),
+        Pageable pageable = PageRequest.of(criteria.getPage(),
+                criteria.getSize(),
                 Sort.by(Sort.Direction.ASC, "createdAt"));
 
         var transactions = transactionRepository.findByFromWalletIdOrToWalletIdAndCreatedAtBetween(
                         wallet.getId(),
                         wallet.getId(),
-                        request.getFrom(),
-                        request.getTo(),
+                        criteria.getFrom(),
+                        criteria.getTo(),
                         pageable).stream()
                 .map(TransactionDto::fromEntity)
                 .toList();
@@ -113,11 +110,11 @@ public class WalletServiceImpl implements WalletService {
         var totalElements = transactionRepository.countByFromWalletIdOrToWalletIdAndCreatedAtBetween(
                 wallet.getId(),
                 wallet.getId(),
-                request.getFrom(),
-                request.getTo()
+                criteria.getFrom(),
+                criteria.getTo()
         );
 
-        return new Paginated<>(request.getPage(), request.getSize(), totalElements, transactions);
+        return new Paginated<>(criteria.getPage(), criteria.getSize(), totalElements, transactions);
     }
 
     /**

@@ -12,9 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 /**
  * REST controller for managing wallet operations such as creation, deposit, withdrawal, balance inquiry, and transfer.
@@ -61,20 +59,19 @@ public class WalletController {
     /**
      * Filters transactions for a specific wallet based on provided criteria.
      *
-     * @param params    the map of filter parameters
-     * @param walletId  the ID of the wallet
-     * @param principal the security principal representing the authenticated user
+     * @param filterCriteria the transaction filter criteria
+     * @param walletId       the ID of the wallet
+     * @param principal      the security principal representing the authenticated user
      * @return a response entity containing a paginated list of Transactions
      */
     @GetMapping("{walletId}/transactions")
     @PreAuthorize("@walletSecurity.isOwner(#walletId, principal.getUsername())")
     public ResponseEntity<Paginated<TransactionDto>> filterTransactions(
-            @RequestParam Map<String, String> params,
+            @Validated(ValidationGroups.ValidationSeq.class) TransactionFilterCriteria filterCriteria,
             @PathVariable Long walletId,
             Principal principal) {
         log.debug("Received request to filter transactions for wallet {} for user: {}", walletId, principal.getName());
-        var request = createTransactionFilterRequest(params);
-        Paginated<TransactionDto> page = walletService.filterTransactions(principal.getName(), walletId, request);
+        Paginated<TransactionDto> page = walletService.filterTransactions(principal.getName(), walletId, filterCriteria);
         return ResponseEntity.ok(page);
     }
 
@@ -125,7 +122,7 @@ public class WalletController {
      */
     @GetMapping("/{walletId}/balance")
     @PreAuthorize("@walletSecurity.isOwner(#walletId, principal.getUsername())")
-    public ResponseEntity<Double> getBalance(@PathVariable Long walletId,
+    public ResponseEntity<BalanceDto> getBalance(@PathVariable Long walletId,
                                              Principal principal) {
         log.debug("Received request to get wallet {} for user: {}", walletId, principal.getName());
         var balance = walletService.getBalance(principal.getName(), walletId);
@@ -149,29 +146,6 @@ public class WalletController {
         log.debug("Received request to transfer wallet {} for user: {}", walletId, principal.getName());
         walletService.transfer(principal.getName(), walletId, request.toWalletId(), request.amount());
         return ResponseEntity.ok("Transfer successful");
-    }
-
-    /**
-     * Creates a TransactionFilterRequest from the provided parameters.
-     *
-     * @param params the map of filter parameters
-     * @return the constructed TransactionFilterRequest
-     */
-    private static TransactionFilterRequest createTransactionFilterRequest(Map<String, String> params) {
-        var request = new TransactionFilterRequest();
-        if (params.containsKey("from")) {
-            request.setFrom(LocalDateTime.parse(params.get("from")));
-        }
-        if (params.containsKey("to")) {
-            request.setTo(LocalDateTime.parse(params.get("to")));
-        }
-        if (params.containsKey("page")) {
-            request.setPage(Integer.parseInt(params.get("page")));
-        }
-        if (params.containsKey("size")) {
-            request.setSize(Integer.parseInt(params.get("size")));
-        }
-        return request;
     }
 }
 

@@ -52,7 +52,7 @@ public class Paginated<T> {
                 page,
                 size,
                 countAll,
-                elements.size() > size,
+                (long) page * size + elements.size() < countAll,
                 page > 1,
                 getElements(size, elements)
         );
