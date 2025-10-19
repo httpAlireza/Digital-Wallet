@@ -47,15 +47,15 @@ public class WalletServiceImpl implements WalletService {
                 .orElseThrow(USER_NOT_FOUND::getAppException);
 
         walletRepository.findByUserUsername(username).stream()
-                .filter(w -> w.getName().equals(request.name()))
+                .filter(w -> w.getName().equals(request.getName()))
                 .findAny()
                 .ifPresent(w -> {
                     throw WALLET_ALREADY_EXISTS.getAppException();
                 });
 
         Wallet wallet = new Wallet();
-        wallet.setName(request.name());
-        wallet.setCurrency(request.currency() != null ? request.currency() : Currency.IRR);
+        wallet.setName(request.getName());
+        wallet.setCurrency(request.getCurrency() != null ? request.getCurrency() : Currency.IRR);
         wallet.setBalance(0.0);
         wallet.setUser(user);
 
