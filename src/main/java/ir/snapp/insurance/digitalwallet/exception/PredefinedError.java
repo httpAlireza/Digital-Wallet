@@ -21,7 +21,8 @@ public enum PredefinedError implements  AppError {
     SERVER_ERROR("server.error", HttpStatus.INTERNAL_SERVER_ERROR),
     TARGET_WALLET_NOT_FOUND("targetWallet.not.found", HttpStatus.NOT_FOUND),
     CURRENCY_MISMATCH("currency.mismatch", HttpStatus.BAD_REQUEST),
-    WALLET_NOT_FOUND("wallet.not.found", HttpStatus.NOT_FOUND)
+    WALLET_NOT_FOUND("wallet.not.found", HttpStatus.NOT_FOUND),
+    WALLET_ALREADY_EXISTS("wallet.already.exists", HttpStatus.BAD_REQUEST),
     ;
 
     private final String errorCode;

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,6 +71,7 @@ public class WalletController {
      * @return a response entity containing a paginated list of Transactions
      */
     @GetMapping("{walletId}/transactions")
+    @PreAuthorize("@walletSecurity.isOwner(#walletId, principal.getUsername())")
     public ResponseEntity<Page<Transaction>> filterTransactions(
             @RequestParam Map<String, String> params,
             @PathVariable Long walletId,
@@ -89,6 +91,7 @@ public class WalletController {
      * @return a response entity indicating the success of the deposit operation
      */
     @PostMapping("/{walletId}/deposit")
+    @PreAuthorize("@walletSecurity.isOwner(#walletId, principal.getUsername())")
     public ResponseEntity<String> deposit(
             @PathVariable Long walletId,
             @Validated(ValidationGroups.ValidationSeq.class) @RequestBody DepositRequest request,
@@ -107,6 +110,7 @@ public class WalletController {
      * @return a response entity indicating the success of the withdrawal operation
      */
     @PostMapping("/{walletId}/withdraw")
+    @PreAuthorize("@walletSecurity.isOwner(#walletId, principal.getUsername())")
     public ResponseEntity<String> withdraw(
             @PathVariable Long walletId,
             @Validated(ValidationGroups.ValidationSeq.class) @RequestBody WithdrawRequest withdrawRequest,
@@ -124,6 +128,7 @@ public class WalletController {
      * @return a response entity containing the balance of the wallet
      */
     @GetMapping("/{walletId}/balance")
+    @PreAuthorize("@walletSecurity.isOwner(#walletId, principal.getUsername())")
     public ResponseEntity<Double> getBalance(@PathVariable Long walletId,
                                              Principal principal) {
         log.debug("Received request to get wallet: {} for user: {}", walletId, principal.getName());
@@ -140,6 +145,7 @@ public class WalletController {
      * @return a response entity indicating the success of the transfer operation
      */
     @PostMapping("/{walletId}/transfer")
+    @PreAuthorize("@walletSecurity.isOwner(#walletId, principal.getUsername())")
     public ResponseEntity<String> transfer(
             @PathVariable Long walletId,
             @Validated(ValidationGroups.ValidationSeq.class) @RequestBody TransferRequest request,

@@ -19,7 +19,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "wallet")
-@Table(name = "wallets")
+@Table(
+        name = "wallets",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"user_id", "name"})
+        }
+)
 public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
