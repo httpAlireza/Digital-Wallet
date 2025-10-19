@@ -4,11 +4,12 @@ import ir.snapp.insurance.digitalwallet.controller.wallet.dto.*;
 import ir.snapp.insurance.digitalwallet.model.Transaction;
 import ir.snapp.insurance.digitalwallet.model.Wallet;
 import ir.snapp.insurance.digitalwallet.service.wallet.WalletService;
-import jakarta.validation.Valid;
+import ir.snapp.insurance.digitalwallet.util.ValidationGroups;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -37,8 +38,9 @@ public class WalletController {
      * @return a response entity containing the created Wallet
      */
     @PostMapping
-    public ResponseEntity<WalletDto> createWallet(@Valid @RequestBody WalletCreationRequest request,
-                                                  Principal principal) {
+    public ResponseEntity<WalletDto> createWallet(
+            @Validated(ValidationGroups.ValidationSeq.class) @RequestBody WalletCreationRequest request,
+            Principal principal) {
         Wallet wallet = walletService.createWallet(principal.getName(), request);
         return ResponseEntity.ok(WalletDto.from(wallet));
     }
@@ -84,9 +86,10 @@ public class WalletController {
      * @return a response entity indicating the success of the deposit operation
      */
     @PostMapping("/{walletId}/deposit")
-    public ResponseEntity<String> deposit(@PathVariable Long walletId,
-                                          @Valid @RequestBody DepositRequest request,
-                                          Principal principal) {
+    public ResponseEntity<String> deposit(
+            @PathVariable Long walletId,
+            @Validated(ValidationGroups.ValidationSeq.class) @RequestBody DepositRequest request,
+            Principal principal) {
         walletService.deposit(principal.getName(), walletId, request.amount());
         return ResponseEntity.ok("Deposit successful");
     }
@@ -100,9 +103,10 @@ public class WalletController {
      * @return a response entity indicating the success of the withdrawal operation
      */
     @PostMapping("/{walletId}/withdraw")
-    public ResponseEntity<String> withdraw(@PathVariable Long walletId,
-                                           @Valid @RequestBody WithdrawRequest withdrawRequest,
-                                           Principal principal) {
+    public ResponseEntity<String> withdraw(
+            @PathVariable Long walletId,
+            @Validated(ValidationGroups.ValidationSeq.class) @RequestBody WithdrawRequest withdrawRequest,
+            Principal principal) {
         walletService.withdraw(principal.getName(), walletId, withdrawRequest.amount());
         return ResponseEntity.ok("Withdrawal successful");
     }
@@ -130,9 +134,10 @@ public class WalletController {
      * @return a response entity indicating the success of the transfer operation
      */
     @PostMapping("/{walletId}/transfer")
-    public ResponseEntity<String> transfer(@PathVariable Long walletId,
-                                           @Valid @RequestBody TransferRequest request,
-                                           Principal principal) {
+    public ResponseEntity<String> transfer(
+            @PathVariable Long walletId,
+            @Validated(ValidationGroups.ValidationSeq.class) @RequestBody TransferRequest request,
+            Principal principal) {
         walletService.transfer(principal.getName(), walletId, request.toWalletId(), request.amount());
         return ResponseEntity.ok("Transfer successful");
     }
