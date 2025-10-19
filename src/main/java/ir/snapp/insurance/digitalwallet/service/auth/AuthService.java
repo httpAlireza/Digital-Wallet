@@ -2,6 +2,7 @@ package ir.snapp.insurance.digitalwallet.service.auth;
 
 
 import ir.snapp.insurance.digitalwallet.controller.auth.dto.AuthResponse;
+import ir.snapp.insurance.digitalwallet.controller.auth.dto.ChangePasswordRequest;
 import ir.snapp.insurance.digitalwallet.controller.auth.dto.LoginRequest;
 import ir.snapp.insurance.digitalwallet.controller.auth.dto.SignupRequest;
 
@@ -25,5 +26,14 @@ public interface AuthService {
      * @return an authentication response containing the authentication token
      */
     AuthResponse signup(SignupRequest request);
+
+    /**
+     * Changes the password for the specified user.
+     *
+     * @param username the username of the user
+     * @param request  the change password request containing current and new passwords
+     */
+    void changePassword(String username, ChangePasswordRequest request);
+
 }
 

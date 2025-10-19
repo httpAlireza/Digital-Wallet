@@ -23,6 +23,8 @@ public enum PredefinedError implements  AppError {
     CURRENCY_MISMATCH("currency.mismatch", HttpStatus.BAD_REQUEST),
     WALLET_NOT_FOUND("wallet.not.found", HttpStatus.NOT_FOUND),
     WALLET_ALREADY_EXISTS("wallet.already.exists", HttpStatus.BAD_REQUEST),
+    CURRENT_PASSWORD_INCORRECT("currentPassword.incorrect", HttpStatus.BAD_REQUEST),
+    USER_ALREADY_EXISTS("user.already.exists", HttpStatus.BAD_REQUEST),
     ;
 
     private final String errorCode;

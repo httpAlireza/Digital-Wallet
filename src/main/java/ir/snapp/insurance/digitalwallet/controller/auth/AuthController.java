@@ -1,6 +1,7 @@
 package ir.snapp.insurance.digitalwallet.controller.auth;
 
 import ir.snapp.insurance.digitalwallet.controller.auth.dto.AuthResponse;
+import ir.snapp.insurance.digitalwallet.controller.auth.dto.ChangePasswordRequest;
 import ir.snapp.insurance.digitalwallet.controller.auth.dto.LoginRequest;
 import ir.snapp.insurance.digitalwallet.controller.auth.dto.SignupRequest;
 import ir.snapp.insurance.digitalwallet.service.auth.AuthService;
@@ -13,8 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
+
 /**
  * REST controller for authentication operations such as login and signup.
+ * Since we are using JWT for authentication, there is no need for logout endpoint.
  *
  * @author Alireza Khodadoost
  */
@@ -48,5 +52,12 @@ public class AuthController {
         AuthResponse response = authService.login(request);
         return ResponseEntity.ok(response);
     }
-}
 
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            @Validated @RequestBody ChangePasswordRequest request,
+            Principal principal) {
+        authService.changePassword(principal.getName(), request);
+        return ResponseEntity.ok("Password changed successfully");
+    }
+}

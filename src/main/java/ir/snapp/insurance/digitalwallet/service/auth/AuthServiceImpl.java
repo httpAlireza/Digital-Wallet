@@ -1,6 +1,7 @@
 package ir.snapp.insurance.digitalwallet.service.auth;
 
 import ir.snapp.insurance.digitalwallet.controller.auth.dto.AuthResponse;
+import ir.snapp.insurance.digitalwallet.controller.auth.dto.ChangePasswordRequest;
 import ir.snapp.insurance.digitalwallet.controller.auth.dto.LoginRequest;
 import ir.snapp.insurance.digitalwallet.controller.auth.dto.SignupRequest;
 import ir.snapp.insurance.digitalwallet.model.User;
@@ -14,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import static ir.snapp.insurance.digitalwallet.exception.PredefinedError.*;
 
 /**
  * Implementation of the AuthService interface providing authentication and user registration functionalities.
@@ -52,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse signup(SignupRequest request) {
         if (userRepository.findByUsername(request.username()).isPresent()) {
-            throw new IllegalArgumentException("Username already exists");
+            throw USER_ALREADY_EXISTS.getAppException();
         }
 
         User newUser = new User();
@@ -64,5 +67,21 @@ public class AuthServiceImpl implements AuthService {
 
         log.debug("User {} signed up successfully", newUser.getUsername());
         return new AuthResponse(token);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void changePassword(String username, ChangePasswordRequest request) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(USER_NOT_FOUND::getAppException);
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw CURRENT_PASSWORD_INCORRECT.getAppException();
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 }

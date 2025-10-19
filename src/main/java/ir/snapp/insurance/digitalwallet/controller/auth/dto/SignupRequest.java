@@ -4,6 +4,8 @@ import ir.snapp.insurance.digitalwallet.util.ValidationGroups;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
+import static ir.snapp.insurance.digitalwallet.util.Constants.PASSWORD_PATTERN;
+
 /**
  * DTO for signup request
  *
@@ -14,7 +16,7 @@ public record SignupRequest(
         String username,
         @NotBlank(message = "password.is_required", groups = ValidationGroups.Presence.class)
         @Pattern(
-                regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$",
+                regexp = PASSWORD_PATTERN,
                 message = "password.must_meet_complexity_requirements",
                 groups = ValidationGroups.Validity.class
         )
