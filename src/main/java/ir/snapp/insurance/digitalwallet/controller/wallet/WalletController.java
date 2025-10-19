@@ -86,7 +86,7 @@ public class WalletController {
     public ResponseEntity<String> deposit(@PathVariable Long walletId,
                                           @RequestBody DepositRequest request,
                                           Principal principal) {
-        walletService.deposit(principal.getName(), walletId, request.getAmount());
+        walletService.deposit(principal.getName(), walletId, request.amount());
         return ResponseEntity.ok("Deposit successful");
     }
 
@@ -102,7 +102,7 @@ public class WalletController {
     public ResponseEntity<String> withdraw(@PathVariable Long walletId,
                                            @RequestBody WithdrawRequest withdrawRequest,
                                            Principal principal) {
-        walletService.withdraw(principal.getName(), walletId, withdrawRequest.getAmount());
+        walletService.withdraw(principal.getName(), walletId, withdrawRequest.amount());
         return ResponseEntity.ok("Withdrawal successful");
     }
 
@@ -132,7 +132,7 @@ public class WalletController {
     public ResponseEntity<String> transfer(@PathVariable Long walletId,
                                            @RequestBody TransferRequest request,
                                            Principal principal) {
-        walletService.transfer(principal.getName(), walletId, request.getToWalletId(), request.getAmount());
+        walletService.transfer(principal.getName(), walletId, request.toWalletId(), request.amount());
         return ResponseEntity.ok("Transfer successful");
     }
 

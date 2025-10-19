@@ -34,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );
 
         UserDetails user = (UserDetails) authentication.getPrincipal();
@@ -48,13 +48,13 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public AuthResponse signup(SignupRequest request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+        if (userRepository.findByUsername(request.username()).isPresent()) {
             throw new IllegalArgumentException("Username already exists");
         }
 
         User newUser = new User();
-        newUser.setUsername(request.getUsername());
-        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        newUser.setUsername(request.username());
+        newUser.setPassword(passwordEncoder.encode(request.password()));
         userRepository.save(newUser);
 
         String token = jwtUtils.generateToken(newUser.getUsername());

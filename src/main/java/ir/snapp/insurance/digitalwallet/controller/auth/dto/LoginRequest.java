@@ -1,10 +1,14 @@
 package ir.snapp.insurance.digitalwallet.controller.auth.dto;
 
-import lombok.Data;
+/**
+ * DTO for login request
+ *
+ * @author Alireza Khodadoost
+ */
 
-@Data
-public class LoginRequest {
-    private String username;
-    private String password;
+public record LoginRequest(
+        String username,
+        String password
+) {
 }
 

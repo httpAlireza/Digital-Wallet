@@ -44,8 +44,8 @@ public class WalletServiceImpl implements WalletService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         Wallet wallet = new Wallet();
-        wallet.setName(request.getName());
-        wallet.setCurrency(request.getCurrency() != null ? request.getCurrency() : Currency.IRR);
+        wallet.setName(request.name());
+        wallet.setCurrency(request.currency() != null ? request.currency() : Currency.IRR);
         wallet.setBalance(0.0);
         wallet.setUser(user);
 

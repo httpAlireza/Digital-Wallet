@@ -1,11 +1,11 @@
 package ir.snapp.insurance.digitalwallet.controller.auth.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-@Data
-@AllArgsConstructor
-public class AuthResponse {
-    private String token;
+/**
+ * DTO for authentication response
+ *
+ * @author Alireza Khodadoost
+ */
+public record AuthResponse(
+        String token) {
 }
 
