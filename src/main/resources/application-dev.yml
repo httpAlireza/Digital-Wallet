@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/digitalwallet
+    username: walletuser
+    password: walletpass
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+jwt:
+  secret: a_very_very_long_sample_jwt_secret_key
+  expiration: 1d

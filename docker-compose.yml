@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: digitalwallet-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: digitalwallet
+      POSTGRES_USER: walletuser
+      POSTGRES_PASSWORD: walletpass
+    ports:
+      - "5432:5432"

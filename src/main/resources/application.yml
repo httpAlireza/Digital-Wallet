@@ -1,7 +1,20 @@
 spring:
   application:
     name: digital-wallet
-
-jwt:
-    secret: a_very_very_long_sample_jwt_secret_key
-    expiration: 1d
+  datasource:
+    hikari:
+      transaction-isolation: 8
+      connection-timeout: 5000
+      maximum-pool-size: 30
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  jackson:
+    default-property-inclusion: non_null
+    deserialization:
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+      ACCEPT_FLOAT_AS_INT: false
+    mapper:
+      ACCEPT_CASE_INSENSITIVE_PROPERTIES: true
+      ACCEPT_CASE_INSENSITIVE_ENUMS: true
+    date-format: com.fasterxml.jackson.databind.util.StdDateFormat
