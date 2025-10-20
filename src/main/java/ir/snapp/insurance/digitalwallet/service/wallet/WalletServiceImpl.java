@@ -1,6 +1,9 @@
 package ir.snapp.insurance.digitalwallet.service.wallet;
 
-import ir.snapp.insurance.digitalwallet.controller.wallet.dto.*;
+import ir.snapp.insurance.digitalwallet.controller.wallet.dto.TransactionDto;
+import ir.snapp.insurance.digitalwallet.controller.wallet.dto.TransactionFilterCriteria;
+import ir.snapp.insurance.digitalwallet.controller.wallet.dto.WalletCreationRequest;
+import ir.snapp.insurance.digitalwallet.controller.wallet.dto.WalletDto;
 import ir.snapp.insurance.digitalwallet.enums.Currency;
 import ir.snapp.insurance.digitalwallet.enums.TransactionType;
 import ir.snapp.insurance.digitalwallet.model.Transaction;
@@ -80,9 +83,9 @@ public class WalletServiceImpl implements WalletService {
      * {@inheritDoc}
      */
     @Override
-    public BalanceDto getBalance(String username, Long walletId) {
+    public WalletDto getWallet(String username, Long walletId) {
         Wallet wallet = findUserWallet(username, walletId);
-        return new BalanceDto(walletId, wallet.getBalance());
+        return WalletDto.fromEntity(wallet);
     }
 
     /**

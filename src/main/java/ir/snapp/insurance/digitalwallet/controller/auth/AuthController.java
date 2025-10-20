@@ -7,20 +7,25 @@ import ir.snapp.insurance.digitalwallet.controller.auth.dto.SignupRequest;
 import ir.snapp.insurance.digitalwallet.service.auth.AuthService;
 import ir.snapp.insurance.digitalwallet.util.ValidationGroups.ValidationSeq;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
 /**
- * REST controller for authentication operations such as login and signup.
- * Since we are using JWT for authentication, there is no need for logout endpoint.
- *
- * @author Alireza Khodadoost
+ * REST controller for user authentication and authorization.
+ * <p>
+ * Supports user registration, login, and password change operations.
+ * JWT is used for stateless authentication; logout endpoint is not required.
+ * </p>
+ * Endpoints:
+ * <ul>
+ *     <li>POST /v1/auth/signup - Register a new user</li>
+ *     <li>POST /v1/auth/login - Authenticate and get JWT token</li>
+ *     <li>POST /v1/auth/change-password - Change password for authenticated user</li>
+ * </ul>
  */
 @RestController
 @RequestMapping("/v1/auth")
@@ -30,22 +35,22 @@ public class AuthController {
     private final AuthService authService;
 
     /**
-     * Handles user signup requests.
+     * Registers a new user and returns an authentication token.
      *
-     * @param request the signup request containing user details
-     * @return a response entity containing the authentication response
+     * @param request the signup request containing user details (username, password, etc.)
+     * @return {@code ResponseEntity} with {@link AuthResponse} and HTTP status 201 (Created) on success
      */
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> signup(@Validated(ValidationSeq.class) @RequestBody SignupRequest request) {
         AuthResponse response = authService.signup(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
-     * Handles user login requests.
+     * Authenticates a user and returns a JWT token.
      *
-     * @param request the login request containing user credentials
-     * @return a response entity containing the authentication response
+     * @param request the login request containing username/email and password
+     * @return {@code ResponseEntity} with {@link AuthResponse} and HTTP status 200 (OK) on success
      */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Validated(ValidationSeq.class) @RequestBody LoginRequest request) {
@@ -54,17 +59,17 @@ public class AuthController {
     }
 
     /**
-     * Handles password change requests for authenticated users.
+     * Changes the password of the authenticated user.
      *
      * @param request   the change password request containing old and new passwords
-     * @param principal the security principal of the authenticated user
-     * @return a response entity indicating the result of the password change operation
+     * @param principal the authenticated user's principal
+     * @return {@code ResponseEntity} with HTTP status 204 (No Content) on success
      */
-    @PostMapping("/change-password")
+    @PatchMapping("/change-password")
     public ResponseEntity<String> changePassword(
             @Validated @RequestBody ChangePasswordRequest request,
             Principal principal) {
         authService.changePassword(principal.getName(), request);
-        return ResponseEntity.ok("Password changed successfully");
+        return ResponseEntity.noContent().build();
     }
 }

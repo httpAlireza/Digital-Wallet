@@ -36,7 +36,7 @@ public interface WalletService {
      * @param walletId the ID of the wallet
      * @return the balance of the wallet
      */
-    BalanceDto getBalance(String username, Long walletId);
+    WalletDto getWallet(String username, Long walletId);
 
     /**
      * Filters transactions for the specified wallet based on the provided filter criteria.
