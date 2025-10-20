@@ -11,7 +11,7 @@ spring:
       maximum-pool-size: 30
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
   jackson:
     default-property-inclusion: non_null
     deserialization:
@@ -21,3 +21,6 @@ spring:
       ACCEPT_CASE_INSENSITIVE_PROPERTIES: true
       ACCEPT_CASE_INSENSITIVE_ENUMS: true
     date-format: com.fasterxml.jackson.databind.util.StdDateFormat
+  flyway:
+    enabled: true
+    locations: classpath:db/migration/postgresql

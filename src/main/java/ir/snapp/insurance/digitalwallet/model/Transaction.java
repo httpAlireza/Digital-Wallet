@@ -41,7 +41,7 @@ public class Transaction {
     private Wallet toWallet;    // Nullable for withdraw
 
     @CreationTimestamp
-    @Column(updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 }
 
