@@ -32,6 +32,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
+    private final CustomAuthEntryPoint authenticationEntryPoint;
 
     /**
      * Password encoder bean (BCrypt).
@@ -72,6 +73,10 @@ public class SecurityConfig {
                         .requestMatchers(POST, "/v1/auth/login").permitAll()
                         .requestMatchers(POST, "/v1/auth/signup").permitAll()
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(authenticationEntryPoint)
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
