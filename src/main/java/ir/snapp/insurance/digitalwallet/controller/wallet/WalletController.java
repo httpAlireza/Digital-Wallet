@@ -1,5 +1,6 @@
 package ir.snapp.insurance.digitalwallet.controller.wallet;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import ir.snapp.insurance.digitalwallet.controller.wallet.dto.*;
 import ir.snapp.insurance.digitalwallet.service.wallet.WalletService;
 import ir.snapp.insurance.digitalwallet.util.Paginated;
@@ -54,6 +55,7 @@ public class WalletController {
      * @return {@code ResponseEntity} containing the created {@link WalletDto} with HTTP status 201 (Created) on success
      */
     @PostMapping
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<WalletDto> createWallet(
             @Validated(ValidationGroups.ValidationSeq.class) @RequestBody WalletCreationRequest request,
             Principal principal) {
@@ -69,6 +71,7 @@ public class WalletController {
      * @return {@code ResponseEntity} containing a list of {@link WalletDto} objects
      */
     @GetMapping
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<List<WalletDto>> getWallets(Principal principal) {
         log.debug("Received request to get wallets for user: {}", principal.getName());
         List<WalletDto> wallets = walletService.getWallets(principal.getName());
@@ -83,6 +86,7 @@ public class WalletController {
      * @return {@code ResponseEntity} containing the {@link WalletDto} object
      */
     @GetMapping("/{walletId}")
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("@walletSecurity.isOwner(#walletId, principal.getUsername())")
     public ResponseEntity<WalletDto> getWallet(
             @PathVariable Long walletId,
@@ -101,6 +105,7 @@ public class WalletController {
      * @return {@code ResponseEntity} containing a paginated list of {@link TransactionDto}
      */
     @GetMapping("/{walletId}/transactions")
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("@walletSecurity.isOwner(#walletId, principal.getUsername())")
     public ResponseEntity<Paginated<TransactionDto>> filterTransactions(
             @Validated(ValidationGroups.ValidationSeq.class) TransactionFilterCriteria filterCriteria,
@@ -120,6 +125,7 @@ public class WalletController {
      * @return {@code ResponseEntity} with a success message
      */
     @PostMapping("/{walletId}/deposit")
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("@walletSecurity.isOwner(#walletId, principal.getUsername())")
     public ResponseEntity<String> deposit(
             @PathVariable Long walletId,
@@ -139,6 +145,7 @@ public class WalletController {
      * @return {@code ResponseEntity} with a success message
      */
     @PostMapping("/{walletId}/withdraw")
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("@walletSecurity.isOwner(#walletId, principal.getUsername())")
     public ResponseEntity<String> withdraw(
             @PathVariable Long walletId,
@@ -158,6 +165,7 @@ public class WalletController {
      * @return {@code ResponseEntity} with a success message
      */
     @PostMapping("/{walletId}/transfer")
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("@walletSecurity.isOwner(#walletId, principal.getUsername())")
     public ResponseEntity<String> transfer(
             @PathVariable Long walletId,

@@ -36,8 +36,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        if (request.getRequestURI().startsWith("/v1/auth/login") ||
-            request.getRequestURI().startsWith("/v1/auth/signup")) {
+        String path = request.getRequestURI();
+        var isLoginOrSignupPath = path.startsWith("/v1/auth/login") || path.startsWith("/v1/auth/signup");
+        var isApiDocsPath = path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui");
+        if (isApiDocsPath || isLoginOrSignupPath) {
             filterChain.doFilter(request, response);
             return;
         }

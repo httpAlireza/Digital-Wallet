@@ -1,5 +1,6 @@
 package ir.snapp.insurance.digitalwallet.controller.auth;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import ir.snapp.insurance.digitalwallet.controller.auth.dto.AuthResponse;
 import ir.snapp.insurance.digitalwallet.controller.auth.dto.ChangePasswordRequest;
 import ir.snapp.insurance.digitalwallet.controller.auth.dto.LoginRequest;
@@ -67,6 +68,7 @@ public class AuthController {
      * @param principal the authenticated user's principal
      * @return {@code ResponseEntity} with HTTP status 204 (No Content) on success
      */
+    @SecurityRequirement(name = "bearerAuth")
     @PatchMapping("/change-password")
     public ResponseEntity<String> changePassword(
             @Validated @RequestBody ChangePasswordRequest request,
