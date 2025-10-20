@@ -1,6 +1,9 @@
 spring:
   application:
     name: digital-wallet
+  threads:
+    virtual:
+      enabled: true
   datasource:
     hikari:
       transaction-isolation: 8
