@@ -3,6 +3,7 @@ package ir.snapp.insurance.digitalwallet.controller.wallet.dto;
 import ir.snapp.insurance.digitalwallet.model.Transaction;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Data Transfer Object for Transaction entity.
@@ -10,12 +11,13 @@ import java.time.LocalDateTime;
  * @author Alireza Khodadoost
  */
 public record TransactionDto(
-        Long id,
+        UUID id,
         String type,
         Double amount,
         Long fromWalletId,
         Long toWalletId,
-        LocalDateTime transactionDate) {
+        LocalDateTime transactionDate
+) {
     public static TransactionDto fromEntity(Transaction transaction) {
         return new TransactionDto(
                 transaction.getId(),

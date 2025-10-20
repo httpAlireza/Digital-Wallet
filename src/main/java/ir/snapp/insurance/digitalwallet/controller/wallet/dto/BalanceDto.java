@@ -1,9 +1,12 @@
 package ir.snapp.insurance.digitalwallet.controller.wallet.dto;
 
-public record BalanceDto
-        (
-                Long walletId,
-                Double balance
-        ) {
-
+/**
+ * DTO for balance information
+ *
+ * @author Alireza Khodadoost
+ */
+public record BalanceDto(
+        Long walletId,
+        Double balance
+) {
 }

@@ -13,6 +13,7 @@ import static ir.snapp.insurance.digitalwallet.util.Constants.MIN_DATE;
 
 /**
  * DTO for filtering transactions request
+ * If any field is null, the default value will be used
  *
  * @author Alireza Khodadoost
  */

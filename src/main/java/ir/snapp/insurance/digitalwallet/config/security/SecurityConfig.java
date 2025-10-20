@@ -1,7 +1,6 @@
 package ir.snapp.insurance.digitalwallet.config.security;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,7 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import static org.springframework.http.HttpMethod.OPTIONS;
+import static org.springframework.http.HttpMethod.POST;
 
 /**
  * Security configuration class for setting up authentication and authorization.
@@ -31,9 +32,6 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
-
-    @Qualifier("handlerExceptionResolver")
-    private final HandlerExceptionResolver resolver;
 
     /**
      * Password encoder bean (BCrypt).
@@ -70,8 +68,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v1/auth/login").permitAll()
-                        .requestMatchers("/v1/auth/signup").permitAll()
+                        .requestMatchers(OPTIONS, "/**").permitAll()
+                        .requestMatchers(POST, "/v1/auth/login").permitAll()
+                        .requestMatchers(POST, "/v1/auth/signup").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

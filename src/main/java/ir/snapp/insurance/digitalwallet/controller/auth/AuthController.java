@@ -53,6 +53,13 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Handles password change requests for authenticated users.
+     *
+     * @param request   the change password request containing old and new passwords
+     * @param principal the security principal of the authenticated user
+     * @return a response entity indicating the result of the password change operation
+     */
     @PostMapping("/change-password")
     public ResponseEntity<String> changePassword(
             @Validated @RequestBody ChangePasswordRequest request,
