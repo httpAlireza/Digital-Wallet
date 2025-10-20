@@ -24,8 +24,10 @@ import java.security.Principal;
  * <ul>
  *     <li>POST /v1/auth/signup - Register a new user</li>
  *     <li>POST /v1/auth/login - Authenticate and get JWT token</li>
- *     <li>POST /v1/auth/change-password - Change password for authenticated user</li>
+ *     <li>PATCH /v1/auth/change-password - Change password for authenticated user</li>
  * </ul>
+ *
+ * @author Alireza Khodadoost
  */
 @RestController
 @RequestMapping("/v1/auth")
